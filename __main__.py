@@ -4,15 +4,19 @@ import pandas as pd
 
 class data:
 
-    def __init__(self, data:Dataframe, labels:Dataframe):
-        self.data = data
-        self.labels = labels
+    def __init__(self, data:dict, labels:list):
+        self.data = data # dict by index as key with row as list in value as numpy array
+        self.labels = labels # list of labels for test data for training
     
     def get_data(self):
-        return self.data
+        return self.data # returns dict of numpy arrays
     
     def get_labels(self):
-        return self.labels
+        return self.labels # returns list of labels
+    
+    #def get_row(self, index:int):
+
+
 
 
 class NeuralNetwor:
@@ -21,14 +25,12 @@ class NeuralNetwor:
         self.input = x
         
 
-data = "./data/train.csv"
-
-df = pd.read_csv(data)
-labels = pd.DataFrame(df.loc[: , 'label'])
+file = "./data/train.csv"
+df = pd.read_csv(file)
+labels = df['label'].to_numpy()
 df.drop(['label'], axis=1, inplace=True)
 
-
-MNIST = data(data=df, labels=labels)
+MNIST = data(data={i: df.iloc[i].to_numpy() for i in range(0, len(df.index))}, labels=labels)
 
 # print(len(df.index))
 # for i in range(0, len(df.index)):

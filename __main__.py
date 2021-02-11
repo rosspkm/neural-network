@@ -19,7 +19,7 @@ class data:
 
 
 
-class NeuralNetwor:
+class NeuralNetwork:
 
     def __init__(self, x:list):
         self.input = x

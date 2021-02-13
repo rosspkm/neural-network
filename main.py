@@ -2,6 +2,8 @@
 import numpy as np
 import pandas as pd
 
+
+
 class data:
 
     def __init__(self, data:dict, labels:list):
@@ -13,13 +15,12 @@ class data:
     
     def get_labels(self):
         return self.labels # returns list of labels
-   
 
 
 class NeuralNetwork:
 
-    def __init__(self):
-        self.weights1 = np.random.rand(16,784) # calculate random weights for layer 1
+    def __init__(self, input_size:int):
+        self.weights1 = np.random.rand(16,input_size) # calculate random weights for layer 1
         self.weights2 = np.random.rand(8,16) # calculate random weights for layer 2
         self.weight_output = np.random.rand(10,8) # calculate random weights for output layer
 
@@ -37,21 +38,37 @@ class NeuralNetwork:
         def __calc_output(): # calculate final output
             return __sigmoid(np.dot(self.weight_output, __calc_layer2()))
 
-        return __calc_output()
+        return __calc_output() # returns array of floats
+    
+    def make_target(self, target_cat:int):
+        target_arr = np.zeros(10)
+        target_arr[target_cat] = 1
+        return target_arr
+
+    def calculate_cost(self, target_cat:int, img:list):
+        act_output = self.calc_all_layers(img)
+        target_output = self.make_target(target_cat) # [0,0,1,0,0,0,0,0,0,0]
+        sum = 0
+        for i in range(len(act_output)):
+            sum += ((act_output[i] - target_output[i])**2)/2
+        
+        return sum
+
+    
 
 
 
+# make this a function eventually
+file = "./data/train.csv"
+df = pd.read_csv(file)
+labels = df['label'].to_numpy()
+df.drop(['label'], axis=1, inplace=True)
 
+MNIST = data(data={i: df.iloc[i].to_numpy() for i in range(0, len(df.index))}, labels=labels)
 
-if __name__ == "main":
+NN = NeuralNetwork(len(MNIST.get_data()[0])+1)
+#for i in range(0, len(MNIST.get_data())):
 
-    file = "./data/train.csv"
-    df = pd.read_csv(file)
-    labels = df['label'].to_numpy()
-    df.drop(['label'], axis=1, inplace=True)
-
-    MNIST = data(data={i: df.iloc[i].to_numpy() for i in range(0, len(df.index))}, labels=labels)
-
-    NN = NeuralNetwork()
-    for i in range(0, len(MNIST.get_data())):
-        print(NN.calc_all_layers(MNIST.get_data()[i]))
+testImg = np.concatenate([[1], MNIST.get_data()[1]])
+print(NN.calculate_cost(MNIST.get_labels()[0], testImg))
+# labels[1]

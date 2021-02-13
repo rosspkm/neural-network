@@ -48,11 +48,24 @@ class NeuralNetwork:
     def calculate_cost(self, target_cat:int, img:list):
         act_output = self.calc_all_layers(img)
         target_output = self.make_target(target_cat) # [0,0,1,0,0,0,0,0,0,0]
-        sum = 0
+        cost = 0
         for i in range(len(act_output)):
-            sum += ((act_output[i] - target_output[i])**2)/2
-        
-        return sum
+            cost += ((act_output[i] - target_output[i])**2)/2
+        return cost
+    
+    [w1, w2, w3, w4]
+
+
+    [.9, .98]
+
+    2*(.9-0)
+    2
+
+    1()
+
+    1(x-0)**2
+    21x-1)**2
+
 
     
 

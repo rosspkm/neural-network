@@ -10,6 +10,7 @@ class NeuralNetwork:
         self.weights2 = np.random.rand(8,16) # calculate random weights for layer 2
         self.weight_output = np.random.rand(10,8) # calculate random weights for output layer
 
+        self.z_output = None
         self.layer1_output = None
         self.layer2_output = None
         self.output_layer_output = None
@@ -30,7 +31,8 @@ class NeuralNetwork:
             return self.layer2_output
         
         def __calc_output(): # calculate final output
-            self.output_layer_output =  __relu(data=np.dot(self.weight_output, __calc_layer2()))
+            self.z_output = np.dot(self.weight_output, __calc_layer2())
+            self.output_layer_output =  __relu(data=self.z_output)
             return self.output_layer_output
 
         return __calc_output() # returns array of floats
@@ -57,20 +59,48 @@ class NeuralNetwork:
         return (y-z)
 
     def layer2_gradient(self, target_cat:int, img:list):
-        temp = self.output_layer_gradient(target_cat=target_cat, img=img)
-        temp2 = self.layer2_output
-        weights = self.weights2
+        temp = self.output_layer_gradient(target_cat=target_cat, img=img) # dont use to calculate anything
+        output = np.zeros(8,16)
+        for row in range(0, len(self.weights2)):
+            for col in range(0, len(self.weights2[row])):
+                if self.layer2_output[row][col] == 0:
+                    output[row][col] = 0
+                else:
+                    output[row][col] = self.weights2[row][col]
+
+        return output
+
+    def layer1_gradient(self, target_cat:int, img:list):
+        temp = self.output_layer_gradient(target_cat=target_cat, img=img) # dont use to calculate anything
+        output = np.zeros(8,16)
+        for row in range(0, len(self.weights1)):
+            for col in range(0, len(self.weights1[row])):
+                if self.layer1_output[row][col] == 0:
+                    output[row][col] = 0
+                else:
+                    output[row][col] = self.weights1[row][col]
+
+        return output
         
+    [16][784]
 
-        # [w1, w2, w3] = [0]
-        # [w4, w5, w6] = [20]
-        # [w7, w8, w9] = [15]
+    [8][16]
+    # c0 - 1/2(ouput-target)**2
+    # 2*1/2(output-target) = output-target
 
-        # need output of layer2, weights2
+    # zL - dot product of (weights_output)(__calc_layer2) (self.z_output)
+    # wL - output layer weights (self.weights_output)
+    # aL - outpuer layer output(self.output_layer_output)
 
+    # del(c0)/del(wL) - is the derivative of the outputlayer_wieights with 
+    # respect of the cost function (output_layer_gradient(may not have it right yet))
 
+    # del(zL)/del(wL) - is the derivative of output layer weights with respect to the output layer output
+    # del(aL)/del(zL) - is the derivative of zl with respect to al
+    # del(c0)/del(aL) - is the derivative of the output layer output with respects to the cost function
 
-
+    # del(c0)/del(aL) = output-target (output_layer_gradient (y-z))
+    # del(aL)/del(zL) = 
 
 # make this a function eventually
 file = "./data/train.csv"

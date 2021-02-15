@@ -26,17 +26,20 @@ class NeuralNetwork:
 
     def calc_all_layers(self, img:list):
 
-        def __sigmoid(data:list): # element wise sigmoid function
-            return (1/(1+(np.exp(-data))))
+        # def __sigmoid(data:list): # element wise sigmoid function
+        #     return (1/(1+(np.exp(-data))))
+
+        def __relu(data:list):
+            return np.maximum(0, data) 
 
         def __calc_layer1(): # calculate layer 1
-            return __sigmoid(np.dot(self.weights1, img))
+            return __relu(np.dot(self.weights1, img))
         
         def __calc_layer2(): #c calculate layer 2
-            return __sigmoid(np.dot(self.weights2, __calc_layer1()))
+            return __relu(np.dot(self.weights2, __calc_layer1()))
         
         def __calc_output(): # calculate final output
-            return __sigmoid(np.dot(self.weight_output, __calc_layer2()))
+            return __relu(np.dot(self.weight_output, __calc_layer2()))
 
         return __calc_output() # returns array of floats
     
@@ -53,21 +56,12 @@ class NeuralNetwork:
             cost += ((act_output[i] - target_output[i])**2)/2
         return cost
     
-    [w1, w2, w3, w4]
-
-
-    [.9, .98]
-
-    2*(.9-0)
-    2
-
-    1()
-
-    1(x-0)**2
-    21x-1)**2
-
-
+    def output_layer_gradient(self, target_cat:int, img:list):
+        y = self.make_target(target_cat=target_cat)
+        z = self.calc_all_layers(img=img)
+        return (y-z)
     
+
 
 
 
@@ -83,5 +77,5 @@ NN = NeuralNetwork(len(MNIST.get_data()[0])+1)
 #for i in range(0, len(MNIST.get_data())):
 
 testImg = np.concatenate([[1], MNIST.get_data()[1]])
-print(NN.calculate_cost(MNIST.get_labels()[0], testImg))
+print(NN.output_layer_gradient(MNIST.get_labels()[0], testImg))
 # labels[1]

@@ -92,7 +92,7 @@ class NeuralNetwork:
     # wL - output layer weights (self.weights_output)
     # aL - outpuer layer output(self.output_layer_output)
 
-    # del(c0)/del(wL) - is the derivative of the outputlayer_wieights with 
+    # del(c0)/del(wL) - is the derivative of the outputlayer_weights with 
     # respect of the cost function (output_layer_gradient(may not have it right yet))
 
     # del(zL)/del(wL) - is the derivative of output layer weights with respect to the output layer output

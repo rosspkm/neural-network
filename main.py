@@ -20,7 +20,7 @@ class NeuralNetwork:
         #     return (1/(1+(np.exp(-data))))
 
         def __relu(data:list):
-            return np.maximum(0, data) 
+            return np.maximum(0,data) 
 
         def __calc_layer1(): # calculate layer 1
             self.layer1_output = __relu(data=np.dot(self.weights1, img))
@@ -32,7 +32,7 @@ class NeuralNetwork:
         
         def __calc_output(): # calculate final output
             self.z_output = np.dot(self.weight_output, __calc_layer2())
-            self.output_layer_output =  __relu(data=self.z_output)
+            self.output_layer_output = __relu(data=self.z_output)
             return self.output_layer_output
 
         return __calc_output() # returns array of floats
@@ -56,6 +56,12 @@ class NeuralNetwork:
     def output_layer_gradient(self, target_cat:int, img:list):
         y = self.make_target(target_cat=target_cat)
         z = self.calc_all_layers(img=img)
+        print(y-z)
+
+
+
+        print(len(np.array([0 if ele <= 0 else ele for ele in self.z_output])))
+        print(len(self.layer2_output))
         return (y-z)
 
     def layer2_gradient(self, target_cat:int, img:list):
@@ -80,17 +86,16 @@ class NeuralNetwork:
                 else:
                     output[row][col] = self.weights1[row][col]
 
-        return output
-        
-    [16][784]
+        return output 
 
-    [8][16]
+
+
     # c0 - 1/2(ouput-target)**2
     # 2*1/2(output-target) = output-target
 
     # zL - dot product of (weights_output)(__calc_layer2) (self.z_output)
     # wL - output layer weights (self.weights_output)
-    # aL - outpuer layer output(self.output_layer_output)
+    # aL - output layer output(self.output_layer_output)
 
     # del(c0)/del(wL) - is the derivative of the outputlayer_weights with 
     # respect of the cost function (output_layer_gradient(may not have it right yet))
@@ -99,8 +104,27 @@ class NeuralNetwork:
     # del(aL)/del(zL) - is the derivative of zl with respect to al
     # del(c0)/del(aL) - is the derivative of the output layer output with respects to the cost function
 
+    # output_layer_weights_gradient = 
+    # del(c0)/del(aL) * del(c0)/del(aL) * del(zL)/del(wL) 
     # del(c0)/del(aL) = output-target (output_layer_gradient (y-z))
-    # del(aL)/del(zL) = 
+    # del(aL)/del(zL) = 0 if less than 0 else 1
+    # del(zL)/del(wL) = 
+
+    # 10,8
+    # 10,1
+    # 10,1
+    # 
+
+    # 
+
+    # aL-1 = [y1, y2, y3]
+    # wL   = [x1, x2, x3]
+    #        [x4, x5, x6]
+    # zl =   [y1*x1 + y2*x2 + y3*x3] = z1
+    #        [y1*x4 + y2*x5 + y3*x3] = z2
+    # 
+    # del(c0)/del(aL) = [o1, o2, o3, o4, o5, o6, o7, o8, o8, o9]
+    # del(aL)/del(zL)       
 
 # make this a function eventually
 file = "./data/train.csv"
@@ -113,6 +137,5 @@ MNIST = classes.data(data={i: df.iloc[i].to_numpy() for i in range(0, len(df.ind
 NN = NeuralNetwork(len(MNIST.get_data()[0])+1)
 #for i in range(0, len(MNIST.get_data())):
 
-testImg = np.concatenate([[1], MNIST.get_data()[1]])
-print(NN.output_layer_gradient(MNIST.get_labels()[0], testImg))
-# labels[1]
+img = np.concatenate([[1], MNIST.get_data()[1]])
+NN.output_layer_gradient(MNIST.get_labels()[0], img)

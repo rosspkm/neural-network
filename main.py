@@ -57,10 +57,15 @@ class NeuralNetwork:
         y = self.make_target(target_cat=target_cat)
         z = self.calc_all_layers(img=img)
         print(y-z)
+        # should be 8,10 matrix where each row is y-z
+
 
 
 
         print(len(np.array([0 if ele <= 0 else ele for ele in self.z_output])))
+        # should be 8, 10 matrix where each row is this^^
+        # and then we multiply each row by the input
+
         print(len(self.layer2_output))
         return (y-z)
 

@@ -11,9 +11,13 @@ class NeuralNetwork:
         self.weight_output = np.random.rand(10,8) # calculate random weights for output layer
 
         self.z_output = None
-        self.layer1_output = None
-        self.layer2_output = None
         self.output_layer_output = None
+
+        self.layer1_output = None
+        self.layer1_z = None
+
+        self.layer2_output = None
+        self.layer2_z = None
 
     def calc_all_layers(self, img:list):
         # def __sigmoid(data:list): # element wise sigmoid function
@@ -23,11 +27,13 @@ class NeuralNetwork:
             return np.maximum(0,data) 
 
         def __calc_layer1(): # calculate layer 1
-            self.layer1_output = __relu(data=np.dot(self.weights1, img))
+            self.layer1_z = np.dot(self.weights1, img)
+            self.layer1_output = __relu(data=self.layer1_z)
             return self.layer1_output
         
         def __calc_layer2(): # calculate layer 2
-            self.layer2_output = __relu(data=np.dot(self.weights2, __calc_layer1()))
+            self.layer2_z = np.dot(self.weights2, __calc_layer1())
+            self.layer2_output = __relu(data=self.layer2_z)
             return self.layer2_output
         
         def __calc_output(): # calculate final output
@@ -73,15 +79,49 @@ class NeuralNetwork:
         # multiplying each element of the the layer2_output against each row of the temp and y-output
 
     def layer2_gradient(self, target_cat:int, img:list):
-        temp = self.output_layer_gradient(target_cat=target_cat, img=img) # dont use to calculate anything
-        output = np.zeros(8,16)
-        for row in range(0, len(self.weights2)):
-            for col in range(0, len(self.weights2[row])):
-                if self.layer2_output[row][col] == 0:
-                    output[row][col] = 0
-                else:
-                    output[row][col] = self.weights2[row][col]
-        return output
+        y = self.make_target(target_cat=target_cat)
+        output = self.layer2_output(img=img)
+        
+        # partial derivative of output w/ respect to cost size is 8 rows of 10
+        
+
+        # partial derivative of z w/ respect to output
+        
+        # layer1_output * relu * output_weights * layer3_weights * dz / c0 
+
+        [1,2,3]
+        [4,5,6]
+        [7,8,9]
+
+        [1+4+7, 2+5+8, 3+6+9]
+
+        # 16x8
+        # 
+        # 1x10
+
+        # a2*w3
+        # [a1, a2, a3, a4] 
+        # 
+        # [ w11, w12, w13, w14,  
+        #    w21, w22, w23, w24,
+        #    w31, w32, w33, w34
+        # ] 
+
+        # [
+        #    a1*x1 + 2 + 3 + 4, [x1]
+        #    a1*x5 + 5 + 6 + 7, [x5]
+        #    a1*9               [x9]
+        # ]
+
+        # 3x + 1
+    
+
+        # should be 8,10 matrix where each row is y-z size is vector of 10
+        temp = np.array([0 if ele <= 0 else ele for ele in self.layer2_z])
+        # should be 8, 10 matrix where each row is this^^
+        # and then we multiply each row by the input
+
+        return np.outer(self.layer1_output, temp*(y-output)) 
 
     def layer1_gradient(self, target_cat:int, img:list):
         temp = self.output_layer_gradient(target_cat=target_cat, img=img) # dont use to calculate anything
@@ -92,7 +132,6 @@ class NeuralNetwork:
                     output[row][col] = 0
                 else:
                     output[row][col] = self.weights1[row][col]
-
         return output 
 
 

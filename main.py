@@ -55,19 +55,22 @@ class NeuralNetwork:
     # the derivative of that is (target output - actual output) 
     def output_layer_gradient(self, target_cat:int, img:list):
         y = self.make_target(target_cat=target_cat)
-        z = self.calc_all_layers(img=img)
-        print(y-z)
-        # should be 8,10 matrix where each row is y-z
+        output = self.calc_all_layers(img=img)
+        
+        # partial derivative of output w/ respect to cost size is 8 rows of 10
+        
 
+        # partial derivative of z w/ respect to output
+        
+        
 
-
-
-        print(len(np.array([0 if ele <= 0 else ele for ele in self.z_output])))
+        # should be 8,10 matrix where each row is y-z size is vector of 10
+        temp = np.array([0 if ele <= 0 else ele for ele in self.z_output])
         # should be 8, 10 matrix where each row is this^^
         # and then we multiply each row by the input
 
-        print(len(self.layer2_output))
-        return (y-z)
+        return np.outer(self.layer2_output, temp*(y-output)) 
+        # multiplying each element of the the layer2_output against each row of the temp and y-output
 
     def layer2_gradient(self, target_cat:int, img:list):
         temp = self.output_layer_gradient(target_cat=target_cat, img=img) # dont use to calculate anything
@@ -78,7 +81,6 @@ class NeuralNetwork:
                     output[row][col] = 0
                 else:
                     output[row][col] = self.weights2[row][col]
-
         return output
 
     def layer1_gradient(self, target_cat:int, img:list):

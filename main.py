@@ -79,49 +79,20 @@ class NeuralNetwork:
         # multiplying each element of the the layer2_output against each row of the temp and y-output
 
     def layer2_gradient(self, target_cat:int, img:list):
+        self.calc_all_layers(img=img)
         y = self.make_target(target_cat=target_cat)
-        output = self.layer2_output(img=img)
-        
-        # partial derivative of output w/ respect to cost size is 8 rows of 10
-        
+        output = self.layer2_output
 
-        # partial derivative of z w/ respect to output
-        
-        # layer1_output * relu * output_weights * layer3_weights * dz / c0 
+        np.dot(np.transpose(self.weights2), np.transpose(self.layer1_output))
+        # #np.transpose(self.weights2) = [16x8]
+        # #self.layer1_output = [16x1]
 
-        [1,2,3]
-        [4,5,6]
-        [7,8,9]
+        # # should be 8,10 matrix where each row is y-z size is vector of 10
+        # temp = np.array([0 if ele <= 0 else ele for ele in self.layer2_z])
+        # # should be 8, 10 matrix where each row is this^^
+        # # and then we multiply each row by the input
 
-        [1+4+7, 2+5+8, 3+6+9]
-
-        # 16x8
-        # 
-        # 1x10
-
-        # a2*w3
-        # [a1, a2, a3, a4] 
-        # 
-        # [ w11, w12, w13, w14,  
-        #    w21, w22, w23, w24,
-        #    w31, w32, w33, w34
-        # ] 
-
-        # [
-        #    a1*x1 + 2 + 3 + 4, [x1]
-        #    a1*x5 + 5 + 6 + 7, [x5]
-        #    a1*9               [x9]
-        # ]
-
-        # 3x + 1
-    
-
-        # should be 8,10 matrix where each row is y-z size is vector of 10
-        temp = np.array([0 if ele <= 0 else ele for ele in self.layer2_z])
-        # should be 8, 10 matrix where each row is this^^
-        # and then we multiply each row by the input
-
-        return np.outer(self.layer1_output, temp*(y-output)) 
+        # return np.outer(self.layer1_output, temp*(y-output)) 
 
     def layer1_gradient(self, target_cat:int, img:list):
         temp = self.output_layer_gradient(target_cat=target_cat, img=img) # dont use to calculate anything
@@ -184,4 +155,4 @@ NN = NeuralNetwork(len(MNIST.get_data()[0])+1)
 #for i in range(0, len(MNIST.get_data())):
 
 img = np.concatenate([[1], MNIST.get_data()[1]])
-NN.output_layer_gradient(MNIST.get_labels()[0], img)
+NN.layer2_gradient(MNIST.get_labels()[0], img)

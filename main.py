@@ -1,5 +1,6 @@
 # neural network start
 import numpy as np
+from numpy.core.fromnumeric import transpose
 import pandas as pd
 from lib import classes
 
@@ -79,18 +80,18 @@ class NeuralNetwork:
         # multiplying each element of the the layer2_output against each row of the temp and y-output
 
     def layer2_gradient(self, target_cat:int, img:list):
-        self.calc_all_layers(img=img)
+        
         y = self.make_target(target_cat=target_cat)
-        output = self.layer2_output
+        output = y-self.calc_all_layers(img=img)
 
-        np.dot(np.transpose(self.weights2), np.transpose(self.layer1_output))
-        # #np.transpose(self.weights2) = [16x8]
-        # #self.layer1_output = [16x1]
+        temp = np.array([0 if ele <= 0 else ele for ele in self.layer2_z])
+        var1 = (np.transpose(self.layer1_output*self.weights2)* temp) # (16,8)
+        var2 = np.transpose(self.weight_output) # (8,10)  
+        print(var1.shape, var2.shape)
+        x = np.dot(var1, var2)
+        print(x.shape, output.shape)
+        #     (16, 10) (10,)
 
-        # # should be 8,10 matrix where each row is y-z size is vector of 10
-        # temp = np.array([0 if ele <= 0 else ele for ele in self.layer2_z])
-        # # should be 8, 10 matrix where each row is this^^
-        # # and then we multiply each row by the input
 
         # return np.outer(self.layer1_output, temp*(y-output)) 
 
